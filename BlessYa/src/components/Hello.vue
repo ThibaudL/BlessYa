@@ -1,16 +1,19 @@
 <template>
   <div class="hello">
-    <img v-if="link" :src="link" style="width: 300px;" />
+    <img v-if="index==link.index"  v-for="link in links" :src="link.data" style="width: 300px;" />
   </div>
 </template>
 
 <script>
-export default {
+  import Vue from 'vue'
+
+  export default {
   name: 'hello',
   data () {
     this.initWs();
     return {
-      'link' : null
+      'links' : [],
+      index : -1
     };
   },
   methods : {
@@ -25,8 +28,9 @@ export default {
         });
 
         ws.on('message', (e) => {
-          console.log(e.data);
-          this.link = e.data;
+          this.links = this.links || [];
+          this.index = ((this.index !== null && this.index !== undefined) ? this.index : -1)+1;
+          this.links.push({data : e.data, index : this.index});
         });
       });
     }
